@@ -119,6 +119,56 @@ window.onload = async function() {
     };
   }
 
+  // Templates modal events
+  if (QS("#templates-btn")) {
+    QS("#templates-btn").onclick = () => {
+      QS("#templates-modal")?.showModal();
+    };
+  }
+  if (QS("#templates-modal-close")) {
+    QS("#templates-modal-close").onclick = () => {
+      QS("#templates-modal")?.close();
+    };
+  }
+  if (QS("#templates-modal")) {
+    QS("#templates-modal").onclick = (e) => {
+      if (e.target === QS("#templates-modal")) QS("#templates-modal").close();
+    };
+  }
+  QSS(".template-card").forEach(card => {
+    card.onclick = () => insertTemplate(card.dataset.template);
+    card.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        insertTemplate(card.dataset.template);
+      }
+    };
+  });
+
+  // Font selector dropdown
+  let fontSelect = QS("#preview-font-select");
+  if (fontSelect) {
+    let savedFont = localStorage.getItem('bitty_preview_font');
+    if (savedFont && ['sans-serif', 'serif', 'monospace'].includes(savedFont)) {
+      fontSelect.value = savedFont;
+    }
+    fontSelect.onchange = () => {
+      let val = fontSelect.value;
+      localStorage.setItem('bitty_preview_font', val);
+      applyPreviewFont(val);
+      showToast(`Preview font: ${val}`);
+    };
+  }
+
+  // Preview frame load handler to apply font & sync overlay
+  let previewFrame = QS("#preview-frame");
+  if (previewFrame) {
+    previewFrame.addEventListener("load", () => {
+      applyPreviewFont();
+      updatePreviewOverlay();
+    });
+  }
+
   if (QS("#recent-btn")) {
     QS("#recent-btn").onclick = (e) => {
       e.stopPropagation();
@@ -160,6 +210,10 @@ window.onload = async function() {
       if (qrModal && qrModal.open) {
         qrModal.close();
       }
+      let templatesModal = QS("#templates-modal");
+      if (templatesModal && templatesModal.open) {
+        templatesModal.close();
+      }
     }
   });
 
@@ -191,9 +245,24 @@ window.onload = async function() {
     saveProjectToRecent(title || 'untitled', window.location.hash, window.location.hash.length);
   } else {
     updateBodyClass();
-    setContent(sessionStorage.getItem("editor-content"))
-
+    let initialContent = sessionStorage.getItem("editor-content");
+    if (!initialContent) {
+      let autosaved = localStorage.getItem("bitty_autosave_content");
+      if (autosaved && autosaved.trim().length > 0) {
+        initialContent = autosaved;
+        let savedTitle = localStorage.getItem("bitty_autosave_title");
+        if (savedTitle && QS("#doc-title-text")) {
+          QS("#doc-title-text").innerText = document.title = savedTitle;
+        }
+        showToast("Restored your auto-saved draft");
+      }
+    }
+    if (initialContent) {
+      setContent(initialContent);
+    }
   }
+
+  startAutosaveTimer();
 };
 
 function setContent(html) {
@@ -435,6 +504,7 @@ function updateLink(url, metadata, push) {
   if(previewContent) {
     console.log("previewing", bittyLink);
     QS("#preview-frame").src = bittyLink;
+    setTimeout(applyPreviewFont, 60);
   }
 
   var hash = location.hash;
@@ -452,6 +522,7 @@ function updateLink(url, metadata, push) {
   QS("#length").onclick = () => {
     window.open(bittyLink, "_blank");
   }
+  updatePreviewOverlay(length);
   for (var key in maxLengths) {
     var maxLength = maxLengths[key];
     var targetEl = QS(key);
@@ -512,6 +583,8 @@ function togglePreview(flag) {
   document.body.classList.toggle("preview", previewContent);
   if (previewContent && bittyLink) {
     QS("#preview-frame").src = bittyLink;
+    updatePreviewOverlay(bittyLink.length);
+    setTimeout(applyPreviewFont, 60);
   }
   let previewBtn = QS("#preview-toggle-btn");
   if (previewBtn) {
@@ -686,6 +759,349 @@ function toggleRecentPopover() {
   } else {
     popover.style.display = "none";
   }
+}
+
+const BOILERPLATE_TEMPLATES = {
+  blank: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blank Page</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 3rem 1.5rem;
+      color: #1a1a1a;
+      background: #fafafa;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 { margin-top: 0; font-size: 1.8rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Blank Page</h1>
+    <p>Start creating your self-contained Bitty Box project here.</p>
+  </div>
+</body>
+</html>`,
+
+  card: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Styled Card</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      max-width: 360px;
+      width: 100%;
+      padding: 2rem;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #e0e7ff;
+      color: #4338ca;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.25rem;
+    }
+    h2 { margin: 0 0 0.5rem; font-size: 1.35rem; color: #111827; }
+    p { color: #6b7280; font-size: 0.95rem; margin: 0 0 1.5rem; line-height: 1.5; }
+    .btn {
+      display: inline-block;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      padding: 0.65rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="avatar">&#128100;</div>
+    <h2>Jane Doe</h2>
+    <p>Digital craftsperson building portable web applications with Bitty Box.</p>
+    <a href="#" class="btn">Connect</a>
+  </div>
+</body>
+</html>`,
+
+  flex: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flex Layout</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      color: #1f2937;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand { font-weight: 700; font-size: 1.1rem; }
+    main {
+      flex: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .grid {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .box {
+      flex: 1 1 calc(50% - 1.5rem);
+      min-width: 240px;
+      padding: 1.25rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+      box-sizing: border-box;
+    }
+    footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Project Layout</div>
+    <nav>Explore</nav>
+  </header>
+  <main>
+    <h1>Welcome to Flex Layout</h1>
+    <p>A responsive multi-column layout built with flexbox.</p>
+    <div class="grid">
+      <div class="box">
+        <h3>Feature One</h3>
+        <p>Lightweight and responsive structure that adapts to all screen sizes.</p>
+      </div>
+      <div class="box">
+        <h3>Feature Two</h3>
+        <p>Completely self-contained in a single URL fragment.</p>
+      </div>
+    </div>
+  </main>
+  <footer>Built with Bitty Box</footer>
+</body>
+</html>`,
+
+  counter: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interactive App</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #0f172a;
+      color: #f8fafc;
+      text-align: center;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+    .counter-display {
+      font-size: 4rem;
+      font-weight: 800;
+      margin: 1rem 0;
+      color: #38bdf8;
+    }
+    .btn-row { display: flex; gap: 0.75rem; }
+    button {
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>Interactive Counter</h2>
+  <div id="count" class="counter-display">0</div>
+  <div class="btn-row">
+    <button onclick="update(-1)">- Decrement</button>
+    <button onclick="update(0)">Reset</button>
+    <button onclick="update(1)">+ Increment</button>
+  </div>
+  <script>
+    let val = 0;
+    function update(delta) {
+      if (delta === 0) val = 0;
+      else val += delta;
+      document.getElementById('count').innerText = val;
+    }
+  </script>
+</body>
+</html>`
+};
+
+function insertTemplate(key) {
+  let template = BOILERPLATE_TEMPLATES[key];
+  if (!template) return;
+
+  let currentText = quill.getText().trim();
+  if (currentText.length > 10) {
+    if (!confirm("Insert this template? Current editor content will be replaced.")) {
+      return;
+    }
+  }
+
+  quill.setText(template + '\n');
+  formatEditorCode();
+  handleContentChange();
+  QS("#templates-modal")?.close();
+  let name = key.charAt(0).toUpperCase() + key.slice(1);
+  showToast(`Loaded ${name} template!`);
+}
+
+function updatePreviewOverlay(bytes) {
+  let bytesEl = QS("#preview-overlay-bytes");
+  let barEl = QS("#preview-overlay-bar");
+  let warningEl = QS("#preview-overlay-warning");
+  if (!bytesEl || !barEl || !warningEl) return;
+
+  bytes = typeof bytes === 'number' ? bytes : (bittyLink ? bittyLink.length : 0);
+  bytesEl.innerText = `${bytes.toLocaleString()} bytes`;
+
+  let percent = Math.min(100, Math.max(4, Math.round((bytes / 4000) * 100)));
+  barEl.style.width = `${percent}%`;
+
+  if (bytes < 2000) {
+    barEl.style.backgroundColor = '#10b981';
+    warningEl.className = 'preview-overlay-warning safe';
+    warningEl.innerHTML = '&#10003; Safe URL length (under 2KB)';
+  } else if (bytes < 4000) {
+    barEl.style.backgroundColor = '#f59e0b';
+    warningEl.className = 'preview-overlay-warning warning';
+    warningEl.innerHTML = '&#9888; Approaching limit (~2.9KB QR code cap & mobile URL limit)';
+  } else {
+    barEl.style.backgroundColor = '#ef4444';
+    warningEl.className = 'preview-overlay-warning danger';
+    warningEl.innerHTML = '&#9888; High byte count! URLs &gt;4KB may truncate on mobile browsers or QR codes';
+  }
+}
+
+function applyPreviewFont(fontType) {
+  if (!fontType) {
+    fontType = QS("#preview-font-select")?.value || localStorage.getItem('bitty_preview_font') || 'sans-serif';
+  }
+  const fontMap = {
+    'sans-serif': '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    'serif': 'Georgia, Cambria, "Times New Roman", Times, serif',
+    'monospace': '"SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+  };
+  const fontFamily = fontMap[fontType] || fontMap['sans-serif'];
+
+  let iframe = QS("#preview-frame");
+  if (iframe) {
+    try {
+      let doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (doc && doc.body) {
+        doc.body.style.fontFamily = fontFamily;
+        let styleTag = doc.getElementById('bitty-injected-font');
+        if (!styleTag) {
+          styleTag = doc.createElement('style');
+          styleTag.id = 'bitty-injected-font';
+          doc.head?.appendChild(styleTag);
+        }
+        styleTag.textContent = `body, p, div, span, h1, h2, h3, h4, h5, h6, li, a { font-family: ${fontFamily} !important; }`;
+      }
+    } catch (e) {
+      console.debug("Could not access iframe contentDocument directly:", e);
+    }
+  }
+}
+
+function triggerAutosave() {
+  let text = editor.innerText ? editor.innerText.trim() : "";
+  if (text.length > 0) {
+    let statusEl = QS("#autosave-status");
+    if (statusEl) {
+      statusEl.classList.add("saving");
+      statusEl.innerText = "Saving...";
+    }
+    try {
+      localStorage.setItem('bitty_autosave_content', editor.innerHTML);
+      let titleText = QS("#doc-title-text")?.innerText || document.title || "";
+      localStorage.setItem('bitty_autosave_title', titleText);
+      localStorage.setItem('bitty_autosave_timestamp', String(Date.now()));
+      setTimeout(() => {
+        if (statusEl) {
+          statusEl.classList.remove("saving");
+          let now = new Date();
+          let timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          statusEl.innerText = `Saved ${timeStr}`;
+        }
+      }, 350);
+    } catch (err) {
+      console.warn("Autosave error:", err);
+    }
+  }
+}
+
+function startAutosaveTimer() {
+  setInterval(triggerAutosave, 30000);
 }
 
 function formatCode(source) {

@@ -27,6 +27,18 @@
 
 <body>
 <iframe class="hide-before-edit" id="preview-frame"></iframe>
+<div id="preview-overlay" class="preview-overlay">
+  <div class="preview-overlay-card">
+    <div class="preview-overlay-header">
+      <span class="preview-overlay-title">Preview URL Size</span>
+      <span id="preview-overlay-bytes" class="preview-overlay-bytes">0 bytes</span>
+    </div>
+    <div class="preview-overlay-meter">
+      <div id="preview-overlay-bar" class="preview-overlay-bar"></div>
+    </div>
+    <div id="preview-overlay-warning" class="preview-overlay-warning"></div>
+  </div>
+</div>
 <div class="editor-container">
 <div id="doc-file"></div>
 <input id="file-input" type="file" name="name" style="display: none;" />
@@ -74,11 +86,20 @@
       <button class="ql-indent" value="-1" title="Outdent"></button>
       <button class="ql-indent" value="+1" title="Indent"></button>
     </span>
+    <button type="button" id="templates-btn" class="formatbar-btn" title="Starter HTML boilerplate templates">Templates</button>
     <button type="button" id="format-code-btn" class="formatbar-btn" title="Auto-indent & format code (Ctrl+S)">Auto-indent</button>
     <button type="button" id="preview-toggle-btn" class="formatbar-btn" title="Toggle preview">Preview</button>
+    <div class="formatbar-select-wrap" title="Preview font family">
+      <select id="preview-font-select" class="formatbar-select" aria-label="Preview Font Family">
+        <option value="sans-serif">Sans-serif</option>
+        <option value="serif">Serif</option>
+        <option value="monospace">Monospace</option>
+      </select>
+    </div>
   </div>
 
   <div class="toolbar-right">
+    <span id="autosave-status" class="autosave-status" title="Draft auto-saved every 30s">Saved</span>
     <button type="button" id="qr-btn" class="hide-before-edit toolbar-action-btn" title="Generate QR code for mobile sharing">QR Code</button>
     <div class="recent-wrapper">
       <button type="button" id="recent-btn" class="toolbar-action-btn" title="Recently edited projects">Recent</button>
@@ -93,6 +114,48 @@
     <div id="length" class="hide-before-edit menu-item" title="Open project link"></div>
   </div>
 </div>
+
+<dialog id="templates-modal" class="bitty-modal templates-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title-col">
+        <h3 class="modal-title">HTML Templates</h3>
+        <span class="modal-byte-badge">Select a starter layout to insert into editor</span>
+      </div>
+      <button type="button" id="templates-modal-close" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+    </div>
+    <div class="templates-grid">
+      <div class="template-card" data-template="blank" tabindex="0">
+        <div class="template-card-header">
+          <span class="template-icon">&#128196;</span>
+          <span class="template-name">Blank Page</span>
+        </div>
+        <p class="template-desc">Clean HTML5 boilerplate with responsive viewport, typography & centered container.</p>
+      </div>
+      <div class="template-card" data-template="card" tabindex="0">
+        <div class="template-card-header">
+          <span class="template-icon">&#127915;</span>
+          <span class="template-name">Styled Card</span>
+        </div>
+        <p class="template-desc">Centered modern profile card with avatar badge, bio text, and interactive button.</p>
+      </div>
+      <div class="template-card" data-template="flex" tabindex="0">
+        <div class="template-card-header">
+          <span class="template-icon">&#128208;</span>
+          <span class="template-name">Flex Layout</span>
+        </div>
+        <p class="template-desc">Multi-section responsive layout featuring top navigation header, 2-column cards, and footer.</p>
+      </div>
+      <div class="template-card" data-template="counter" tabindex="0">
+        <div class="template-card-header">
+          <span class="template-icon">&#9881;</span>
+          <span class="template-name">Interactive App</span>
+        </div>
+        <p class="template-desc">Self-contained counter mini-app with modern styling, animated numbers, and JS controls.</p>
+      </div>
+    </div>
+  </div>
+</dialog>
 
 <dialog id="qr-modal" class="bitty-modal">
   <div class="modal-card">
