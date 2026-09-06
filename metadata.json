@@ -1,0 +1,8 @@
+{
+  "name": "itty.bitty",
+  "description": "Create self-contained websites and apps encoded entirely inside a link URL fragment.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

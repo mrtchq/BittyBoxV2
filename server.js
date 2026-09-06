@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const PORT = 3000;
 const DOCS_DIR = path.resolve(__dirname, 'docs');
 
 const MIME_TYPES = {
@@ -97,6 +97,6 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, 'localhost', () => {
-  console.log(`itty.bitty local server running at http://localhost:${PORT}/`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`itty.bitty local server running at http://0.0.0.0:${PORT}/`);
 });

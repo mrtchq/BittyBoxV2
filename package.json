@@ -2,11 +2,13 @@
   "name": "itty-bitty",
   "version": "2.0.0",
   "scripts": {
+    "dev": "node server.js",
     "build": "node build-v2.js",
     "build:v1": "node build-v1.js",
     "build:all": "node build-v2.js && node build-v1.js",
     "start": "node server.js",
-    "serve": "node server.js"
+    "serve": "node server.js",
+    "lint": "node -c server.js build-v1.js build-v2.js"
   },
   "dependencies": {
     "brotli-wasm": "^1.1.0",

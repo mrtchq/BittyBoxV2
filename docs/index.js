@@ -256,7 +256,7 @@
     var fragment = window.location.hash.substring(1);
 
     let content = null //sessionStorage.getItem("editor-content");
-    if (content || (fragment.length < 3 && !isFramed)) {
+    if (content || fragment.length < 3) {
       return location.href = "/edit";
     }
 
