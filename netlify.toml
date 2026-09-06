@@ -1,0 +1,24 @@
+[functions]
+  external_node_modules = [
+    "sharp"
+  ]
+  directory = "functions/"
+
+[[edge_functions]]
+  path = "/*"
+  function = "metadata"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/render/*"
+  [headers.values]
+  Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+  Access-Control-Allow-Origin = "*"

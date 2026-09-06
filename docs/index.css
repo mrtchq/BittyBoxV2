@@ -1,0 +1,427 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  margin:0;
+}
+
+:root {
+  --text-color: #16161d;
+  --background-color: white;
+  --shadow-color: var(--text-color);
+  --backdrop-color: red; 
+  /* repeating-conic-gradient(rgba(255,255,255,1.0) 0% 25%, transparent 0% 50%) 50% / 4px 4px; */
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-color:white;
+    --background-color: #16161d;
+    --backdrop: repeating-conic-gradient(rgba(128,128,128,.5) 0% 25%, transparent 0% 50%) 50% / 4px 4px;
+
+  }
+  body{
+    color:var(--text-color);
+    background-color:var(--background-color);
+  }
+}
+
+#iframe {
+  border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
+#menu {
+  width: 48px;
+  height: 48px;
+  top:0;
+  right: 0;
+  position:fixed;
+  z-index:9;
+  border:none;
+  color: #16161d;
+  opacity: .8;
+  border-bottom-left-radius: 0;
+  font-size: 18px;
+  transition: font-size 100ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  text-align: right;
+  mix-blend-mode: exclusion;
+}
+
+#menu svg {
+  width: 1em;
+  height: 1em;
+  /* background-blend-mode: difference; */
+}
+
+#menu.open,
+#menu:hover {
+  color:white;
+  opacity:1.0;
+  font-size: 48px;
+  /* transition: font-size 1000ms ease-in; */
+}
+#menu.open svg,
+#menu:hover svg{
+  background:#16161d;
+
+}
+#menu.open svg .inner,
+#menu:hover svg .inner {
+  fill:white;
+}
+#menu.open svg .outer,
+#menu:hover svg .outer {
+  fill:transparent;
+}
+
+#edit {
+  font-family: monospace;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.54);
+  position: absolute;
+  z-index: 100;
+  position: absolute;
+  top: 0.85em;
+  right: 1em;
+  display: none;
+}
+#edit:not(:hover) {
+  text-decoration: none;
+}
+#warning {
+  position: absolute;
+  border-radius: 4px;
+  background-color: #feecc2;
+  padding: 1em;
+  font-size: 16px;
+  width: 20em;
+  z-index: 100;
+  top: 10vh;
+  left: 50vw;
+  margin-left: -10em;
+}
+#warning:empty {
+  display: none;
+}
+body.toasting #iframe,
+body.toasting #edit {
+  opacity: 0.5;
+  pointer-events: none;
+}
+body.toasting #toast {
+  box-sizing: border-box;
+  background-color: #feecc2;
+  border-radius: 4px;
+  font-size: 13px;
+  left: 50%;
+  top: 10px;
+  margin-left: -160px;
+  padding: 1em;
+  position: absolute;
+  max-width: 320px;
+  z-index: 101;
+}
+body:not(.toasting) #toast,
+body.toasting #warning {
+  display: none;
+}
+
+body:not(.download) #download {
+  display:none;
+}
+
+#download {
+  background:#fafafa;
+  width:100vw;
+  height:100vh;
+  position:absolute;
+  top:0;
+  left:0;
+  display:flex;
+  text-decoration: none;
+  color:black;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size:14px;
+
+}
+#dl-image {
+  width:128px;
+  height:128px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url("data:image/svg+xml,%0A%3Csvg width='128' height='128' viewBox='0 0 128 128' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cmask id='path-1-outside-1_116_2' maskUnits='userSpaceOnUse' x='27' y='15' width='74' height='98' fill='black'%3E%3Crect fill='white' x='27' y='15' width='74' height='98'/%3E%3Cpath d='M80 16H28V112H100V36L80 16Z'/%3E%3C/mask%3E%3Cpath d='M80 16H28V112H100V36L80 16Z' fill='white'/%3E%3Cpath d='M28 16V15H27V16H28ZM80 16L80.7071 15.2929L80.4142 15H80V16ZM28 112H27V113H28V112ZM100 112V113H101V112H100ZM100 36H101V35.5858L100.707 35.2929L100 36ZM28 17H80V15H28V17ZM29 112V16H27V112H29ZM100 111H28V113H100V111ZM99 36V112H101V36H99ZM100.707 35.2929L80.7071 15.2929L79.2929 16.7071L99.2929 36.7071L100.707 35.2929Z' fill='black' fill-opacity='0.15' mask='url(%23path-1-outside-1_116_2)'/%3E%3C/svg%3E%0A");
+  padding: 20px 32px;
+  box-sizing: border-box;
+  display:flex;
+  justify-content: center;
+  align-items: center;;
+  color:rgba(0,0,0,0.3);
+  font-weight:bold;
+}
+#dl-button {
+  text-decoration:none;
+  background:gray;
+  color:white;
+  padding:0.5em 1em;
+  border-radius:2em;
+  display:none;
+}
+#dl-button:hover {
+  background:black;
+}
+#dl-name {
+  margin-bottom:2em;
+}
+
+body:not(.loading) #loader {
+  /* display:none; */
+  /* opacity:1.0;   */
+  top:-6em;
+  transition: top 300ms ease-in;
+}
+#loader{
+  border-radius:0.1em;
+  width: 0.5em;
+  height: .5em;
+  font-size: 10px;
+  margin: 0 auto;
+  top:0em;
+  position: relative;
+  text-indent: -9999em;
+  color: white;
+  opacity:1.0;
+  transition: top 600ms ease-out;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: turntable 2.8s infinite ease-in-out;
+  animation: turntable 2.8s infinite ease-in-out;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+  animation-timing-function: ease-in-out;
+
+  --ld0: 0.00em 2.25em 0 0.20em
+  rgba(127,127,127,1.50);
+  --ld1: 0.93em 2.24em 0 0.20em
+  rgba(127,127,127,1.45);
+  --ld2: 1.76em 2.20em 0 0.18em
+  rgba(127,127,127,1.31);
+  --ld3: 2.43em 2.15em 0 0.16em
+  rgba(127,127,127,1.09);
+  --ld4: 2.85em 2.08em 0 0.13em
+  rgba(127,127,127,0.81);
+  --ld5: 3.00em 2.00em 0 0.10em
+  rgba(127,127,127,0.50);
+  --ld6: 2.85em 1.92em 0 0.07em
+  rgba(127,127,127,0.19);
+  --ld7: 2.43em 1.85em 0 0.04em
+  rgba(127,127,127,-0.09);
+  --ld8: 1.76em 1.80em 0 0.02em
+  rgba(127,127,127,-0.31);
+  --ld9: 0.93em 1.76em 0 0.00em
+  rgba(127,127,127,-0.45);
+  --ld10: 0.00em 1.75em 0 0.00em
+  rgba(127,127,127,-0.50);
+  --ld11: -0.93em 1.76em 0 0.00em
+  rgba(127,127,127,-0.45);
+  --ld12: -1.76em 1.80em 0 0.02em
+  rgba(127,127,127,-0.31);
+  --ld13: -2.43em 1.85em 0 0.04em
+  rgba(127,127,127,-0.09);
+  --ld14: -2.85em 1.92em 0 0.07em
+  rgba(127,127,127,0.19);
+  --ld15: -3.00em 2.00em 0 0.10em
+  rgba(127,127,127,0.50);
+  --ld16: -2.85em 2.08em 0 0.13em
+  rgba(127,127,127,0.81);
+  --ld17: -2.43em 2.15em 0 0.16em
+  rgba(127,127,127,1.09);
+  --ld18: -1.76em 2.20em 0 0.18em
+  rgba(127,127,127,1.31);
+  --ld19: -0.93em 2.24em 0 0.20em
+  rgba(127,127,127,1.45);
+}
+
+
+@keyframes turntable {
+  100%,
+  0% {box-shadow:var(--ld0),var(--ld4), var(--ld8),var(--ld12),var(--ld16)}
+  5% {box-shadow:var(--ld1),var(--ld5), var(--ld9),var(--ld13),var(--ld17)}
+  10% {box-shadow:var(--ld2),var(--ld6), var(--ld10),var(--ld14),var(--ld18)}
+  15% {box-shadow:var(--ld3),var(--ld7), var(--ld11),var(--ld15),var(--ld19)}
+  20% {box-shadow:var(--ld4),var(--ld8), var(--ld12),var(--ld16),var(--ld0)}
+  25% {box-shadow:var(--ld5),var(--ld9), var(--ld13),var(--ld17),var(--ld1)}
+  30% {box-shadow:var(--ld6),var(--ld10), var(--ld14),var(--ld18),var(--ld2)}
+  35% {box-shadow:var(--ld7),var(--ld11), var(--ld15),var(--ld19),var(--ld3)}
+  40% {box-shadow:var(--ld8),var(--ld12), var(--ld16),var(--ld0),var(--ld4)}
+  45% {box-shadow:var(--ld9),var(--ld13), var(--ld17),var(--ld1),var(--ld5)}
+  50% {box-shadow:var(--ld10),var(--ld14), var(--ld18),var(--ld2),var(--ld6)}
+  55% {box-shadow:var(--ld11),var(--ld15), var(--ld19),var(--ld3),var(--ld7)}
+  60% {box-shadow:var(--ld12),var(--ld16), var(--ld0),var(--ld4),var(--ld8)}
+  65% {box-shadow:var(--ld13),var(--ld17), var(--ld1),var(--ld5),var(--ld9)}
+  70% {box-shadow:var(--ld14),var(--ld18), var(--ld2),var(--ld6),var(--ld10)}
+  75% {box-shadow:var(--ld15),var(--ld19), var(--ld3),var(--ld7),var(--ld11)}
+  80% {box-shadow:var(--ld16),var(--ld0), var(--ld4),var(--ld8),var(--ld12)}
+  85% {box-shadow:var(--ld17),var(--ld1), var(--ld5),var(--ld9),var(--ld13)}
+  90% {box-shadow:var(--ld18),var(--ld2), var(--ld6),var(--ld10),var(--ld14)}
+  95% {box-shadow:var(--ld19),var(--ld3), var(--ld7),var(--ld11),var(--ld15)}
+}
+
+
+.dialog {
+    border: 2px solid white;
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px black, inset 0 0 0 3px black;
+    min-width: 300px;
+    padding: 1.2em;
+    display:flex;
+}
+.dialog, .dialog button {font-size: 18px;font-weight: 600;font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";}
+
+dialog::backdrop {
+  background: rgba(255,255,255,0.5);
+  /* repeating-conic-gradient(rgba(255,255,255,.5) 0% 25%, transparent 0% 50%) 50% / 4px 4px; */
+}
+
+dialog#qr-dialog {
+  display: flex;
+  flex-direction: column;
+}
+dialog#qr-dialog div {
+  text-align: center;
+}
+
+.dialog button {
+  border: 1px solid white;
+  border-radius: 9px;
+  box-shadow: inset 0 0 0 2px black;
+  min-width: 4em;
+  min-height: 1.8em;
+  background-color: white;
+  margin-left:1em;
+  padding: 0 0.8em;
+  color:currentColor;
+}
+
+.dialog button:last-child {
+  box-shadow: 0 0 0 4px black, inset 0 0 0 2px black;
+}
+
+.dialog form {
+    text-align: right;
+    margin-top: 1em;
+    font-size: 18px;
+}
+
+dialog.menu {
+    top: 48px;
+    right: 0;
+    position: fixed;
+    margin: 0;
+    left: auto;
+    padding:0;
+    bottom: 0;
+    max-width:16em;
+    font-weight:bold;
+    padding-bottom:.8em;
+}
+
+.menu-container {
+  display:flex;
+  flex-direction: column;
+
+}
+
+.menu .url {
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+  opacity: 0.5;
+  padding: 0.2em 0.8em;
+  width:auto;
+  border: 1.9px solid black;
+  flex: 1 1 auto;
+  margin: 2px;
+  font-size: 16px;
+}
+
+.menu hr {
+  background-color:var(--text-color);
+  height:2px;
+  width: 100%;
+}
+.menu .url:focus {
+}
+.menu .url:focus-within {
+}
+
+.menu .menu-icons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+  cursor:default;
+}
+
+.menu .menu-icons .menu-item {
+    width: 24px;
+    height: 24px;
+    padding: 12px;
+    /* display:flex; */
+    /* justify-content: center; */
+}
+.menu .menu-icons .menu-item svg{
+  width:2em;
+  height:2em;
+  font-size:12px;
+}
+
+.menu .menu-item {
+  padding: 0.65em 1em;
+  cursor:default;
+}
+
+.menu .menu-item:hover {
+  background-color:black;
+  color:white;
+}
+
+
+
+.menu {
+  /* width: auto; */
+  color: var(--text-color);
+  /* background-color: var(--background-color); */
+  border: 2px solid currentColor;
+  padding: 0.5em 0;
+  box-shadow: 2px 2px var(--shadow-color);
+  margin-right: 2px;
+  border-radius: 2px;
+  margin-top: -2px;
+  z-index: 300;
+  /* top: 100px; */
+  /* text-align: left; */
+  /* float: right; */
+  /* width: 10rem; */
+  position: absolute;
+  /* right: 1rem; */
+  background-color:var(--background-color);
+  }
+
+
+.menu .menu-item {
+    color: var(--text-color);
+    text-decoration: none;
+    line-height: 2em;
+    text-align: left;
+    display: block;
+    padding: 0 1em;
+    cursor: default;
+}

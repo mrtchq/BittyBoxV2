@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<title>itty.bitty.history</title>
+<meta charset="utf-8"/>
+<link rel="icon" href="favicon.svg" type="image/x-icon" />
+<meta name="viewport" content="width=device-width, viewport-fit=cover">
+<meta name="description" content="itty bitty history">
+<script src="js/util.js"></script>
+<link rel="stylesheet" href="history.css">
+
+
+<body>
+<input id="search" type="search" placeholder="search"></input>
+<div id="results"></div>
+
+</body>
+<script type="module">
+import * as bitty from './bitty.js';
+
+navigator.storage.persist().then(function(persistent) { 
+  console.log("persist", persistent)  ;
+})
+
+let openRequest = indexedDB.open("history", 3);
+
+openRequest.onupgradeneeded = function() {
+  // let db = openRequest.result;
+  // if (!db.objectStoreNames.contains('history')) { // if there's no "books" store
+  //   db.createObjectStore('history', {keyPath: 'id'}); // create it
+  // }
+};
+
+openRequest.onerror = function() {
+  console.error("Error", openRequest.error);
+};
+
+
+function firstValidString(...args) {
+  for (let i in args) {
+    let s = args[i]
+    if (s && s.length) return s;
+  }
+}
+
+function deleteHistoryItem(key) {
+  let db = openRequest.result;
+  console.log("db", db, key);
+
+  let transaction = db.transaction("urls", "readwrite"); // (1)
+  let history = transaction.objectStore("urls"); // (2)
+
+  document.getElementById(key).remove()
+  history.delete(key);
+}
+
+const renderResults = (e) => {
+  let cursor = e.target.result;
+  console.log("curs", cursor)
+  if (cursor) {
+    try {
+    let key = cursor.key; // book key (id field)
+    let value = cursor.value; // book object
+    console.log("key", key, value)
+    let url = new URL(value.url);
+    let parseInfo = bitty.parseBittyURL(url);
+
+    let info = bitty.pathToMetadata(parseInfo.path);
+
+    let title = firstValidString(info.title, parseInfo.hashTitle, value.title, parseInfo.hashData);
+    let description = info.d
+    console.log("info", info);
+    let image = info.i ? atob(info.i.replace(/=/g,'')) : null;
+    // let image = path.join("/");
+    // let emoji = image.startsWith("http") ? null : decodeURIComponent(image);
+
+    document.getElementById("results").appendChild(
+        m('a', {href:url, id:value.id, target:"_blank", title:title},
+        m('div.delete', {onclick: (e) => {e.stopPropagation(); e.preventDefault();  deleteHistoryItem(value.id); return false;}}, "×"),
+        m('div.info', 
+          m('span.title', title),m('br'),
+          m('span.desc', value.text || description)
+        ),
+        image ? 
+          m('div.preview', {style:"background-image:url(" + image + ")"})
+           :  m('div.emoji', info.f),
+        
+        )
+      )
+    } catch (e) {console.log(e)}
+    cursor.continue();
+  } 
+};
+
+openRequest.onsuccess = function() {
+  let db = openRequest.result;
+  console.log("db", db);
+
+  let transaction = db.transaction("urls", "readwrite"); // (1)
+  let objectStore = transaction.objectStore("urls"); // (2)
+
+
+  // get all books
+  document.getElementById("results").innerHTML = ""
+
+  objectStore.getAll()
+  let request = objectStore.index('created').openCursor();
+
+  // called for each book found by the cursor
+  request.onsuccess = renderResults;
+
+
+};
+
+
+document.getElementById("search").oninput = (e) => {
+  let query = e.target.value;
+  let db = openRequest.result;
+
+  let transaction = db.transaction("urls", "readwrite"); // (1)
+  let objectStore = transaction.objectStore("urls"); // (2)
+
+  document.getElementById("results").innerHTML = ""
+  objectStore.getAll()
+
+  let request = objectStore.openCursor(IDBKeyRange.only(query));
+  request.onerror = (e) => console.log("err", e)
+  request.onsuccess = renderResults;
+
+}
+
+
+
+</script>
+
