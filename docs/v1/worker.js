@@ -1,6 +1,6 @@
 self.addEventListener('install', function(e) {
  e.waitUntil(
-   caches.open('ittybitty-v1').then(function(cache) {
+   caches.open('bittybox-v1').then(function(cache) {
      return cache.addAll([
        '/',
        '/favicon.ico'

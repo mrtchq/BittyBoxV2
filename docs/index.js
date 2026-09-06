@@ -13,7 +13,7 @@
         
   function addToast() {
     // `<div id="toast">
-    // itty.bitty is experimental technology that renders linked content from outside sources.
+    // Bitty Box is experimental technology that renders linked content from outside sources.
     // <a href="http://toast.bitty.site" target="_blank">Learn&nbsp;more</a>.
     // <br><br>This content is only as trustworthy as its source, and it should be treated with the caution you would show any insecure web page.
     // <br><br><button onclick="dismiss()">I understand</button> <input id="never" type="checkbox"><label for="never">Never show this</label>
@@ -36,22 +36,6 @@
     return document.iframe;
   }
 
-  async function getMenu() {
-    if (!document.menuButton) {  
-      let menuButton = document.createElement('div');
-      menuButton.id = "menu";
-      menuButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><g fill-rule="evenodd" class="logo" clip-rule="evenodd"><path fill="#fff" d="M6.5 19.5a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2h8a5 5 0 0 1 4.33 7.5 5 5 0 0 1-4.33 7.5h-8Z" class="outer"/><path fill="#16161D" d="M6.5 5.5a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h2v-13h-2Zm8 3h-2v2h2a1 1 0 1 0 0-2Zm-5 0v10h5a4 4 0 0 0 3.123-6.5A4 4 0 0 0 14.5 5.5h-5v3Zm3 5h2a1 1 0 1 1 0 2h-2v-2Z" class="inner"/></g></svg>`
-      menuButton.onclick = () => {
-        let menu = new bitty_menu.Menu(menuButton);
-        console.log("men", menu)
-        menu.show()
-      }
-      document.body.appendChild(menuButton);
-      document.menuButton = menuButton;
-    }
-    return document.menuButton;
-  }
-  getMenu()
   let autohideTimeout;
   function showLoader(state) {
     let loader = document.getElementById("loader");

@@ -7,7 +7,7 @@
 <meta id="themeColorDark" name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
 <link rel="canonical" id="canonical" href="/edit">
 
-<title>itty.bitty</title>
+<title>Bitty Box</title>
 <link rel="stylesheet" type="text/css" href="edit.css">
 <link id="favicon" rel="icon" href='/favicon.svg'>
 <link rel="stylesheet"
@@ -21,6 +21,7 @@
         crossorigin="anonymous"></script>
 <script src="/js/crypto-js.min.js"></script>
 <script src="/js/lzma/lzma_worker-min.js"></script>
+<script src="/js/qrious.min.js"></script>
 <script src="/edit.js" type="module"></script>
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
 
@@ -32,6 +33,7 @@
 <div id="drop-zone"></div>
 
 <div id="copy-message">Link copied to clipboard.</div>
+<div id="toast" class="toast-message" style="display:none;"></div>
 
 
 
@@ -47,58 +49,70 @@
   </form>
 </div>
 
-<div id="placeholder">&nbsp;itty bitty things<br>&nbsp;can be conveyed in a link.<br>&nbsp;type here &ndash; and then share!<p>&nbsp;<a id="ib-info" href="http://about.bitty.site" target="_blank">about itty bitty</a></p></div>
+<div id="placeholder">&nbsp;bitty box things<br>&nbsp;can be conveyed in a link.<br>&nbsp;type here &ndash; and then share!</div>
 
 <div id="editor"></div>
+</div>
 
 <div class="toolbar" id="menubar">
-
-   <!-- <div class="spacer"></div> -->
-  <div class="toolbar-right">
-    <div id="length" class="hide-before-edit menu-item"></div>
-    <div id="share" class="hide-before-edit menu-item">share</div>
-    <div id="mainmenu">
-      <div class="menu-item">menu</div>
-      <div id="menu-contents" class="menu">
-        <a id="preview">show preview</a>
-        <a id="copy">copy link</a>
-        <hr>
-        <span id="menus-share-hint" class="disabled">share via</span><br>
-        <a target="_blank" id="qrcode" href="https://zxing.appspot.com/generator/">make qr code</a>
-        <a target="_blank" id="twitter" href="https://twitter.com/">twitter</a>
-        <!--  <a target="_blank" id="bitly" href="https://bitly.com/">Bitly</a><br> -->
-
-        <a id="upload" style="display:none">upload file…</a>
-        <hr>
-        <!-- <a id="new" href="/edit">new site</a><br> -->
-        <a id="about" target="_blank" href="http://about.bitty.site" id="about">about itty</a>
-      </div>
-    </div>
-  </div>
-
-
   <div class="toolbar hide-before-edit" id="formatbar">
-
-    <div class="menu-item" id="format-toggle">Aa</div>
+    <div class="menu-item" id="format-toggle" title="Toggle formatting toolbar">Aa</div>
     <span class="ql-formats">
-      <button class="ql-bold"></button>
-      <button class="ql-italic"></button>
+      <button class="ql-bold" title="Bold"></button>
+      <button class="ql-italic" title="Italic"></button>
       <select class="ql-header" id="ql-header">HX</select>
       <select class="ql-color"><option value="#F6D4D2"/><option value="#FAE4D3"/><option value="#FEF3D5"/><option value="#CFE8DC"/><option value="#CFE0E8"/><option value="#E1D7E8"/><option value="white"/><option value="#E99590"/><option value="#F3BB92"/><option value="#FDE095"/><option value="#86C6A8"/><option value="#86B1C6"/><option value="#B39BC6"/><option value="#A4A4A4"/><option value="#D42A20"/><option value="#E77625"/><option value="#FAC22B"/><option value="#0E8E51"/><option value="#0E638E"/><option value="#67378D"/><option value="#727272"/><option value="#BF0000"/><option value="#DB3F00"/><option value="#F8A600"/><option value="#005E12"/><option value="#00275E"/><option value="#2C005C"/><option value="#3D3D3D"/><option value="#860000"/><option value="#943E00"/><option value="#AE7400"/><option value="#00420D"/><option value="#001B42"/><option value="#1F0040"/><option value="black"/></select>
       <select class="ql-background"><option value="#F6D4D2"/><option value="#FAE4D3"/><option value="#FEF3D5"/><option value="#CFE8DC"/><option value="#CFE0E8"/><option value="#E1D7E8"/><option value="white"/><option value="#E99590"/><option value="#F3BB92"/><option value="#FDE095"/><option value="#86C6A8"/><option value="#86B1C6"/><option value="#B39BC6"/><option value="#A4A4A4"/><option value="#D42A20"/><option value="#E77625"/><option value="#FAC22B"/><option value="#0E8E51"/><option value="#0E638E"/><option value="#67378D"/><option value="#727272"/><option value="#BF0000"/><option value="#DB3F00"/><option value="#F8A600"/><option value="#005E12"/><option value="#00275E"/><option value="#2C005C"/><option value="#3D3D3D"/><option value="#860000"/><option value="#943E00"/><option value="#AE7400"/><option value="#00420D"/><option value="#001B42"/><option value="#1F0040"/><option value="black"/></select>
-      <button class="ql-clean"></button>
+      <button class="ql-clean" title="Clear formatting"></button>
     </span>
     <span class="ql-formats">
-      <button class="ql-code-block"></button>
-      <button class="ql-link"></button>
-      <select class="ql-align"></select>
-      <button type="button" class="ql-list" value="bullet"></button>
-      <button type="button" class="ql-list" value="ordered"></button>
-      <button class="ql-indent" value="-1"></button>
-      <button class="ql-indent" value="+1"></button>
+      <button class="ql-code-block" title="Code block"></button>
+      <button class="ql-link" title="Insert link"></button>
+      <select class="ql-align" title="Text align"></select>
+      <button type="button" class="ql-list" value="bullet" title="Bullet list"></button>
+      <button type="button" class="ql-list" value="ordered" title="Numbered list"></button>
+      <button class="ql-indent" value="-1" title="Outdent"></button>
+      <button class="ql-indent" value="+1" title="Indent"></button>
     </span>
+    <button type="button" id="format-code-btn" class="formatbar-btn" title="Auto-indent & format code (Ctrl+S)">Auto-indent</button>
+    <button type="button" id="preview-toggle-btn" class="formatbar-btn" title="Toggle preview">Preview</button>
+  </div>
+
+  <div class="toolbar-right">
+    <button type="button" id="qr-btn" class="hide-before-edit toolbar-action-btn" title="Generate QR code for mobile sharing">QR Code</button>
+    <div class="recent-wrapper">
+      <button type="button" id="recent-btn" class="toolbar-action-btn" title="Recently edited projects">Recent</button>
+      <div id="recent-popover" class="recent-popover" style="display: none;">
+        <div class="recent-header">
+          <span class="recent-title-heading">Recently Edited</span>
+          <button type="button" id="clear-recent-btn" class="recent-clear-btn" title="Clear recent history">Clear</button>
+        </div>
+        <ul id="recent-list" class="recent-list"></ul>
+      </div>
+    </div>
+    <div id="length" class="hide-before-edit menu-item" title="Open project link"></div>
   </div>
 </div>
-</div>
+
+<dialog id="qr-modal" class="bitty-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title-col">
+        <h3 id="qr-modal-title" class="modal-title">Bitty Box Project</h3>
+        <span id="qr-byte-count" class="modal-byte-badge"></span>
+      </div>
+      <button type="button" id="qr-modal-close" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="qr-canvas-container">
+        <canvas id="qr-canvas"></canvas>
+      </div>
+      <p class="qr-hint">Scan with your mobile camera to open this Bitty Box project directly on your device.</p>
+      <div class="qr-actions">
+        <button type="button" id="qr-copy-btn" class="modal-action-btn">Copy Link</button>
+      </div>
+    </div>
+  </div>
+</dialog>
 </body>
 </html>

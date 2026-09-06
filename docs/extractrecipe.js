@@ -1,4 +1,4 @@
-javascript:((itty_bitty_recipes) => {
+javascript:((bitty_box_recipes) => {
   try {
 
     let els=document.querySelectorAll('script[type="application/ld+json"]');
@@ -21,21 +21,21 @@ javascript:((itty_bitty_recipes) => {
       var blob = new Blob([JSON.stringify(json)],{type : 'application/ld+json;charset=utf-8'});
       var a = new FileReader();
       a.onload = function(e) {
-        let url = itty_bitty_recipes + '/#/' + e.target.result;
+        let url = bitty_box_recipes + '/#/' + e.target.result;
         console.log("URL", url.length, url)
         open(url);
       };
       a.readAsDataURL(blob);
     }
   } catch (e) {
-    alert("itty.bitty.recipes: Failed\n" + e)
+    alert("bitty.box.recipes: Failed\n" + e)
   }
 })('http://localhost')
 
 
 /*
 javascript:(function(){
-  let id="ittybitty";
+  let id="bittybox";
   if (document.getElementById(id)) return;
   var l = document.createElement('script');
   l.setAttribute('type','text/javascript');

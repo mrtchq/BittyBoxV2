@@ -50,7 +50,7 @@ function resolveFilePath(reqPath) {
     return dirIndexPath;
   }
 
-  // SPA fallback for pathnames that look like itty.bitty routes or titles
+  // SPA fallback for pathnames that look like Bitty Box routes or titles
   let indexPath = path.join(DOCS_DIR, 'index.html');
   if (fs.existsSync(indexPath)) {
     return indexPath;
@@ -98,5 +98,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`itty.bitty local server running at http://0.0.0.0:${PORT}/`);
+  console.log(`Bitty Box local server running at http://0.0.0.0:${PORT}/`);
 });

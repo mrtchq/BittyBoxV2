@@ -178,11 +178,8 @@ class Menu {
         el("div.menu-item", {id: "twitter", onclick:this.makeTweet, innerHTML:this.icons.twitter} ),
       ),
       el("div.menu-item", {onclick:this.copyLink}, "copy"),
-      el("div.menu-item", {onclick:this.systemShare}, "share…"),
       // el("div.menu-item", {onclick:this.makeTinyurl}, "shorten"),
       // el("div.menu-item", {onclick:this.makeTinyurl}, "edit…"),
-      fullMenu ? el("hr") : null,
-      fullMenu ? el("div.menu-item", {onclick:this.showAbout}, "itty bitty") : null,
       )
     )
 

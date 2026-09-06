@@ -1,6 +1,6 @@
 self.addEventListener('install', function(e) {
  e.waitUntil(
-   caches.open('ittybitty').then(function(cache) {
+   caches.open('bittybox').then(function(cache) {
      return cache.addAll([
        '/',
        '/index.html',

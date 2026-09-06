@@ -1,7 +1,7 @@
 {
-  "short_name": "itty.bitty",
-  "name": "itty.bitty.app",
-  "description": "itty.bitty.app",
+  "short_name": "Bitty Box",
+  "name": "Bitty Box",
+  "description": "Bitty Box",
   "icons": [
     {
       "src": "/favicon.svg",
