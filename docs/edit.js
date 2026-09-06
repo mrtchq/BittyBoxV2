@@ -16,6 +16,13 @@ var b = document.documentElement.setAttribute(
   navigator.userAgent
 );
 
+// Apply saved theme or system preference immediately to prevent flash
+try {
+  let initialTheme = getActiveTheme();
+  document.documentElement.setAttribute('data-theme', initialTheme);
+  document.documentElement.style.colorScheme = initialTheme;
+} catch (e) {}
+
 var bindings = {}
 var quill = new Quill('#editor', {
   theme: 'snow',
@@ -160,12 +167,31 @@ window.onload = async function() {
     };
   }
 
-  // Preview frame load handler to apply font & sync overlay
+  // Preview frame load handler to apply font, theme & sync overlay
   let previewFrame = QS("#preview-frame");
   if (previewFrame) {
     previewFrame.addEventListener("load", () => {
       applyPreviewFont();
+      applyPreviewTheme();
       updatePreviewOverlay();
+    });
+  }
+
+  // Theme switcher button
+  let themeBtn = QS("#theme-btn");
+  if (themeBtn) {
+    themeBtn.onclick = () => {
+      toggleTheme();
+    };
+  }
+  applyTheme(getActiveTheme(), false);
+
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      let saved = localStorage.getItem('bitty_theme');
+      if (!saved) {
+        applyTheme(e.matches ? 'dark' : 'light', false);
+      }
     });
   }
 
@@ -1069,6 +1095,81 @@ function applyPreviewFont(fontType) {
       }
     } catch (e) {
       console.debug("Could not access iframe contentDocument directly:", e);
+    }
+  }
+}
+
+function getActiveTheme() {
+  try {
+    let saved = localStorage.getItem('bitty_theme');
+    if (saved === 'dark' || saved === 'light') {
+      return saved;
+    }
+  } catch (e) {}
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+  return 'light';
+}
+
+function applyTheme(theme, isUserAction = false) {
+  theme = theme === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.style.colorScheme = theme;
+
+  if (isUserAction) {
+    try {
+      localStorage.setItem('bitty_theme', theme);
+    } catch (e) {}
+  }
+
+  updateThemeButtonUI(theme);
+  applyPreviewTheme(theme);
+
+  let metaLight = QS("#themeColor");
+  if (metaLight) {
+    metaLight.content = theme === 'dark' ? '#111111' : '#f1f1f1';
+  }
+}
+
+function updateThemeButtonUI(theme) {
+  let btn = QS("#theme-btn");
+  let icon = QS("#theme-icon");
+  let text = QS("#theme-text");
+  if (!btn) return;
+
+  let isDark = theme === 'dark';
+  if (icon) {
+    icon.innerHTML = isDark ? '&#9790;' : '&#9728;';
+  }
+  if (text) {
+    text.innerText = isDark ? 'Dark' : 'Light';
+  }
+  btn.title = `Theme: ${isDark ? 'Dark' : 'Light'} (Click to switch to ${isDark ? 'Light' : 'Dark'} mode)`;
+  btn.setAttribute('aria-label', `Theme: ${isDark ? 'Dark' : 'Light'}. Toggle theme`);
+}
+
+function toggleTheme() {
+  let current = getActiveTheme();
+  let next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next, true);
+  showToast(`Theme set to ${next === 'dark' ? 'Dark' : 'Light'} mode`);
+}
+
+function applyPreviewTheme(theme) {
+  if (!theme) {
+    theme = getActiveTheme();
+  }
+  let iframe = QS("#preview-frame");
+  if (iframe) {
+    try {
+      let doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (doc && doc.documentElement) {
+        doc.documentElement.setAttribute('data-theme', theme);
+        doc.documentElement.style.colorScheme = theme;
+      }
+    } catch (e) {
+      // Cross-origin or sandboxed
     }
   }
 }
