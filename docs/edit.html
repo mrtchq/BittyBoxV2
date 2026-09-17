@@ -76,48 +76,102 @@
       </div>
     </div>
 
-    <div class="header-center">
-      <button type="button" id="templates-btn" class="header-action-pill" title="Starter HTML boilerplate templates">
-        <span class="pill-icon">✨</span> Templates
-      </button>
-      <button type="button" id="format-code-btn" class="header-action-pill" title="Auto-indent & format code (Ctrl+S)">
-        <span class="pill-icon">⚡</span> Auto-indent
-      </button>
-      <button type="button" id="preview-toggle-btn" class="header-action-pill" title="Toggle live preview split-screen">
-        <span class="pill-icon">👁️</span> Preview
-      </button>
-      <div class="formatbar-select-wrap" title="Preview font family">
-        <select id="preview-font-select" class="formatbar-select" aria-label="Preview Font Family">
-          <option value="sans-serif">Sans-serif</option>
-          <option value="serif">Serif</option>
-          <option value="monospace">Monospace</option>
-        </select>
-      </div>
-    </div>
-
     <div class="header-right">
-      <div id="length" class="byte-chip" title="Project size / click to open in new tab">0 bytes</div>
-      <span id="autosave-status" class="autosave-status" title="Draft auto-saved every 30s">Saved</span>
-      <button type="button" id="theme-btn" class="header-tool-btn" title="Toggle theme (Light / Dark)" aria-label="Toggle Light or Dark theme">
-        <span id="theme-icon" class="theme-icon">&#9790;</span><span id="theme-text">Dark</span>
+      <button type="button" id="preview-toggle-btn" class="header-action-pill" title="Toggle live preview split-screen">
+        <span class="pill-icon">👁️</span> <span class="pill-text">Preview</span>
       </button>
-      <button type="button" id="qr-btn" class="header-tool-btn" title="Generate QR code for mobile sharing">
-        <span class="btn-icon">📱</span> QR Code
-      </button>
-      <div class="recent-wrapper">
-        <button type="button" id="recent-btn" class="header-tool-btn" title="Recently edited projects">
-          <span class="btn-icon">🕒</span> Recent
+
+      <!-- Tools & Options Drop-down Menu -->
+      <div class="header-dropdown-wrap" id="tools-dropdown-wrap">
+        <button type="button" id="tools-menu-btn" class="header-tool-btn dropdown-trigger" aria-haspopup="true" aria-expanded="false" title="Tools & Options">
+          <span class="btn-icon">⚡</span>
+          <span class="btn-label">Tools</span>
+          <span class="dropdown-chevron">&#9662;</span>
         </button>
-        <div id="recent-popover" class="recent-popover" style="display: none;">
-          <div class="recent-header">
-            <span class="recent-title-heading">Recently Edited</span>
-            <button type="button" id="clear-recent-btn" class="recent-clear-btn" title="Clear recent history">Clear</button>
+
+        <div id="tools-menu-dropdown" class="header-dropdown-menu" role="menu">
+          <div class="dropdown-group-title">Editor Tools</div>
+
+          <button type="button" id="templates-btn" class="dropdown-menu-item" role="menuitem" title="Starter HTML boilerplate templates">
+            <span class="item-icon">✨</span>
+            <div class="item-text">
+              <span class="item-title">Starter Templates</span>
+              <span class="item-sub">Blank, Card, Flex &amp; App boilerplates</span>
+            </div>
+          </button>
+
+          <button type="button" id="format-code-btn" class="dropdown-menu-item" role="menuitem" title="Auto-indent & format code (Ctrl+S)">
+            <span class="item-icon">⚡</span>
+            <div class="item-text">
+              <span class="item-title">Auto-indent Code</span>
+              <span class="item-sub">Format HTML, CSS &amp; JavaScript</span>
+            </div>
+            <span class="item-shortcut">Ctrl+S</span>
+          </button>
+
+          <div class="dropdown-menu-row">
+            <span class="item-icon">🔤</span>
+            <div class="item-text">
+              <span class="item-title">Preview Font</span>
+              <span class="item-sub">Live preview typography</span>
+            </div>
+            <div class="formatbar-select-wrap" title="Preview font family">
+              <select id="preview-font-select" class="formatbar-select dropdown-select" aria-label="Preview Font Family">
+                <option value="sans-serif">Sans-serif</option>
+                <option value="serif">Serif</option>
+                <option value="monospace">Monospace</option>
+              </select>
+            </div>
           </div>
-          <ul id="recent-list" class="recent-list"></ul>
+
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-group-title">Share &amp; History</div>
+
+          <button type="button" id="qr-btn" class="dropdown-menu-item" role="menuitem" title="Generate QR code for mobile sharing">
+            <span class="item-icon">📱</span>
+            <div class="item-text">
+              <span class="item-title">QR Code</span>
+              <span class="item-sub">Scan link on phone or tablet</span>
+            </div>
+          </button>
+
+          <button type="button" id="recent-btn" class="dropdown-menu-item" role="menuitem" title="Recently edited projects">
+            <span class="item-icon">🕒</span>
+            <div class="item-text">
+              <span class="item-title">Recent Projects</span>
+              <span class="item-sub">View recent links &amp; history</span>
+            </div>
+            <span class="item-chevron">&#9656;</span>
+          </button>
+
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-group-title">Preferences</div>
+
+          <button type="button" id="theme-btn" class="dropdown-menu-item" role="menuitem" title="Toggle theme (Light / Dark)" aria-label="Toggle Light or Dark theme">
+            <span id="theme-icon" class="theme-icon item-icon">&#9790;</span>
+            <div class="item-text">
+              <span class="item-title">Theme</span>
+              <span class="item-sub">Toggle Light &amp; Dark appearance</span>
+            </div>
+            <span id="theme-text" class="item-badge">Dark</span>
+          </button>
         </div>
       </div>
+
+      <!-- Floating Recent Projects Popover -->
+      <div id="recent-popover" class="recent-popover" style="display: none;">
+        <div class="recent-header">
+          <span class="recent-title-heading">Recently Edited</span>
+          <button type="button" id="clear-recent-btn" class="recent-clear-btn" title="Clear recent history">Clear</button>
+        </div>
+        <ul id="recent-list" class="recent-list"></ul>
+      </div>
+
+      <div id="length" class="byte-chip" title="Project size / click to open in new tab">0 bytes</div>
+      <span id="autosave-status" class="autosave-status" title="Draft auto-saved every 30s">Saved</span>
+
       <button type="button" id="copy" class="header-cta-btn" title="Copy self-contained shareable link">
-        <span class="btn-icon">🔗</span> Copy Link
+        <span class="btn-icon">🔗</span> <span class="copy-text">Copy Link</span>
       </button>
     </div>
   </header>

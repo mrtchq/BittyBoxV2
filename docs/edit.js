@@ -103,14 +103,51 @@ window.onload = async function() {
   if (QS("#preview")) QS("#preview").onclick = togglePreview;
   if (QS("#format-toggle")) QS("#format-toggle").onclick = toggleFormat;
   
+  // Tools menu dropdown toggle
+  let toolsBtn = QS("#tools-menu-btn");
+  let toolsWrap = QS("#tools-dropdown-wrap");
+  let toolsDropdown = QS("#tools-menu-dropdown");
+
+  function closeToolsDropdown() {
+    if (toolsWrap) toolsWrap.classList.remove("open");
+    if (toolsDropdown) toolsDropdown.classList.remove("show");
+    if (toolsBtn) toolsBtn.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleToolsDropdown() {
+    let isOpen = toolsWrap?.classList.contains("open") || toolsDropdown?.classList.contains("show");
+    if (isOpen) {
+      closeToolsDropdown();
+    } else {
+      let recentPop = QS("#recent-popover");
+      if (recentPop) recentPop.style.display = "none";
+      if (toolsWrap) toolsWrap.classList.add("open");
+      if (toolsDropdown) toolsDropdown.classList.add("show");
+      if (toolsBtn) toolsBtn.setAttribute("aria-expanded", "true");
+    }
+  }
+
+  if (toolsBtn) {
+    toolsBtn.onclick = (e) => {
+      e.stopPropagation();
+      toggleToolsDropdown();
+    };
+  }
+
   if (QS("#format-code-btn")) {
     QS("#format-code-btn").onclick = () => {
+      closeToolsDropdown();
       let formatted = formatEditorCode();
       showToast(formatted ? "Code auto-indented!" : "Code already cleanly indented");
     };
   }
   if (QS("#preview-toggle-btn")) QS("#preview-toggle-btn").onclick = () => togglePreview();
-  if (QS("#qr-btn")) QS("#qr-btn").onclick = showQRCodeModal;
+  if (QS("#qr-btn")) {
+    QS("#qr-btn").onclick = () => {
+      closeToolsDropdown();
+      showQRCodeModal();
+    };
+  }
   if (QS("#qr-modal-close")) QS("#qr-modal-close").onclick = () => QS("#qr-modal")?.close();
   if (QS("#qr-modal")) {
     QS("#qr-modal").onclick = (e) => {
@@ -130,6 +167,7 @@ window.onload = async function() {
   // Templates modal events
   if (QS("#templates-btn")) {
     QS("#templates-btn").onclick = () => {
+      closeToolsDropdown();
       QS("#templates-modal")?.showModal();
     };
   }
@@ -199,6 +237,7 @@ window.onload = async function() {
   if (QS("#recent-btn")) {
     QS("#recent-btn").onclick = (e) => {
       e.stopPropagation();
+      closeToolsDropdown();
       toggleRecentPopover();
     };
   }
@@ -212,10 +251,13 @@ window.onload = async function() {
   }
 
   document.addEventListener("click", (e) => {
+    if (toolsWrap && !toolsWrap.contains(e.target)) {
+      closeToolsDropdown();
+    }
     let popover = QS("#recent-popover");
     let recentBtn = QS("#recent-btn");
     if (popover && popover.style.display !== "none") {
-      if (!popover.contains(e.target) && e.target !== recentBtn) {
+      if (!popover.contains(e.target) && e.target !== recentBtn && !recentBtn?.contains(e.target)) {
         popover.style.display = "none";
       }
     }
@@ -229,6 +271,7 @@ window.onload = async function() {
       showToast("Code formatted & project updated!");
     }
     if (e.key === "Escape") {
+      closeToolsDropdown();
       let popover = QS("#recent-popover");
       if (popover && popover.style.display !== "none") {
         popover.style.display = "none";
