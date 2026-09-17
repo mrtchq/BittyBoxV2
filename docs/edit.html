@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src data: 'self'; script-src cdnjs.cloudflare.com cdn.jsdelivr.net cdn.quilljs.com 'self'; connect-src https://codepen.io https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; style-src https://fonts.googleapis.com cdnjs.cloudflare.com cdn.jsdelivr.net cdn.quilljs.com 'unsafe-inline' 'self'">
-<meta id="themeColor" name="theme-color" content="#f1f1f1" media="(prefers-color-scheme: light)">
-<meta id="themeColorDark" name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+<meta id="themeColor" name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+<meta id="themeColorDark" name="theme-color" content="#0d0f12" media="(prefers-color-scheme: dark)">
 <link rel="canonical" id="canonical" href="/edit">
 
-<title>Bitty Box</title>
+<title>Bitty Box &mdash; Self-Contained Web Pages in a Link</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="edit.css">
 <link id="favicon" rel="icon" href='/favicon.svg'>
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"
       integrity="sha384-ecIckRi4QlKYya/FQUbBUjS4qp65jF/J87Guw5uzTbO1C1Jfa/6kYmd6dXUF6D7i"
       crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.min.js"
         integrity="sha384-reiVBUvj2HgLgCZalqLFSMBVD9LdtiwGyybRGCq2AfP8Rgebz5DxEnwKp4FpagKV"
         crossorigin="anonymous"></script>
@@ -23,162 +25,262 @@
 <script src="/js/lzma/lzma_worker-min.js"></script>
 <script src="/js/qrious.min.js"></script>
 <script src="/edit.js" type="module"></script>
-<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+</head>
 
 <body>
-<iframe class="hide-before-edit" id="preview-frame"></iframe>
-<div id="preview-overlay" class="preview-overlay">
-  <div class="preview-overlay-card">
-    <div class="preview-overlay-header">
-      <span class="preview-overlay-title">Preview URL Size</span>
-      <span id="preview-overlay-bytes" class="preview-overlay-bytes">0 bytes</span>
-    </div>
-    <div class="preview-overlay-meter">
-      <div id="preview-overlay-bar" class="preview-overlay-bar"></div>
-    </div>
-    <div id="preview-overlay-warning" class="preview-overlay-warning"></div>
-  </div>
-</div>
-<div class="editor-container">
-<div id="doc-file"></div>
-<input id="file-input" type="file" name="name" style="display: none;" />
-<div id="drop-zone"></div>
+  <!-- Top Navigation Header -->
+  <header class="bitty-header">
+    <div class="header-left">
+      <a href="/" class="brand-link" title="Bitty Box Home">
+        <span class="brand-icon">📦</span>
+        <span class="brand-name">Bitty Box</span>
+        <span class="brand-pill">v2.0</span>
+      </a>
 
-<div id="copy-message">Link copied to clipboard.</div>
-<div id="toast" class="toast-message" style="display:none;"></div>
+      <div class="doc-title-container">
+        <div id="doc-title" class="doc-title-trigger" placeholder="untitled" title="Click to edit project title & metadata"> 
+          <span class="title-tag-icon">🏷️</span>
+          <div class="title" id="doc-title-text"></div>
+          <span class="title-chevron">&#9662;</span>
 
-
-
-
-<div id="doc-title" class="toolbarbutton hide-before-edit" placeholder="untitled"> 
-  <div class="title" id="doc-title-text"></div>
-  <form id="md-contents" class="menu">
-    <div class="inputrow"><label for="md-title">title</label><input type="text" name="title" id="md-title" placeholder="untitled"><input title="Include link metadata" type="checkbox" name="includeMetadata" id="md-include" value="true" checked></div>
-    <div class="inputrow metadata-on"><label for="md-description">description</label><input type="text" name="description" id="md-description" placeholder="text"></div>
-    <div class="inputrow metadata-on"><label for="md-favicon">favicon</label><input type="text" name="favicon" id="md-favicon" placeholder="emoji or url"></div>
-    <div class="inputrow metadata-on"><label for="md-image">image</label><input type="text" name="image" id="md-image" placeholder="image url"></div>
-    <div class="inputrow"><label for="md-password">password</label><input type="text" name="password" id="md-password" placeholder="encryption password"></div>
-  </form>
-</div>
-
-<div id="placeholder">&nbsp;bitty box things<br>&nbsp;can be conveyed in a link.<br>&nbsp;type here &ndash; and then share!</div>
-
-<div id="editor"></div>
-</div>
-
-<div class="toolbar" id="menubar">
-  <div class="toolbar hide-before-edit" id="formatbar">
-    <div class="menu-item" id="format-toggle" title="Toggle formatting toolbar">Aa</div>
-    <span class="ql-formats">
-      <button class="ql-bold" title="Bold"></button>
-      <button class="ql-italic" title="Italic"></button>
-      <select class="ql-header" id="ql-header">HX</select>
-      <select class="ql-color"><option value="#F6D4D2"/><option value="#FAE4D3"/><option value="#FEF3D5"/><option value="#CFE8DC"/><option value="#CFE0E8"/><option value="#E1D7E8"/><option value="white"/><option value="#E99590"/><option value="#F3BB92"/><option value="#FDE095"/><option value="#86C6A8"/><option value="#86B1C6"/><option value="#B39BC6"/><option value="#A4A4A4"/><option value="#D42A20"/><option value="#E77625"/><option value="#FAC22B"/><option value="#0E8E51"/><option value="#0E638E"/><option value="#67378D"/><option value="#727272"/><option value="#BF0000"/><option value="#DB3F00"/><option value="#F8A600"/><option value="#005E12"/><option value="#00275E"/><option value="#2C005C"/><option value="#3D3D3D"/><option value="#860000"/><option value="#943E00"/><option value="#AE7400"/><option value="#00420D"/><option value="#001B42"/><option value="#1F0040"/><option value="black"/></select>
-      <select class="ql-background"><option value="#F6D4D2"/><option value="#FAE4D3"/><option value="#FEF3D5"/><option value="#CFE8DC"/><option value="#CFE0E8"/><option value="#E1D7E8"/><option value="white"/><option value="#E99590"/><option value="#F3BB92"/><option value="#FDE095"/><option value="#86C6A8"/><option value="#86B1C6"/><option value="#B39BC6"/><option value="#A4A4A4"/><option value="#D42A20"/><option value="#E77625"/><option value="#FAC22B"/><option value="#0E8E51"/><option value="#0E638E"/><option value="#67378D"/><option value="#727272"/><option value="#BF0000"/><option value="#DB3F00"/><option value="#F8A600"/><option value="#005E12"/><option value="#00275E"/><option value="#2C005C"/><option value="#3D3D3D"/><option value="#860000"/><option value="#943E00"/><option value="#AE7400"/><option value="#00420D"/><option value="#001B42"/><option value="#1F0040"/><option value="black"/></select>
-      <button class="ql-clean" title="Clear formatting"></button>
-    </span>
-    <span class="ql-formats">
-      <button class="ql-code-block" title="Code block"></button>
-      <button class="ql-link" title="Insert link"></button>
-      <select class="ql-align" title="Text align"></select>
-      <button type="button" class="ql-list" value="bullet" title="Bullet list"></button>
-      <button type="button" class="ql-list" value="ordered" title="Numbered list"></button>
-      <button class="ql-indent" value="-1" title="Outdent"></button>
-      <button class="ql-indent" value="+1" title="Indent"></button>
-    </span>
-    <button type="button" id="templates-btn" class="formatbar-btn" title="Starter HTML boilerplate templates">Templates</button>
-    <button type="button" id="format-code-btn" class="formatbar-btn" title="Auto-indent & format code (Ctrl+S)">Auto-indent</button>
-    <button type="button" id="preview-toggle-btn" class="formatbar-btn" title="Toggle preview">Preview</button>
-    <div class="formatbar-select-wrap" title="Preview font family">
-      <select id="preview-font-select" class="formatbar-select" aria-label="Preview Font Family">
-        <option value="sans-serif">Sans-serif</option>
-        <option value="serif">Serif</option>
-        <option value="monospace">Monospace</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="toolbar-right">
-    <span id="autosave-status" class="autosave-status" title="Draft auto-saved every 30s">Saved</span>
-    <button type="button" id="theme-btn" class="toolbar-action-btn" title="Toggle theme (Light / Dark)" aria-label="Toggle Light or Dark theme">
-      <span id="theme-icon" class="theme-icon">&#9790;</span><span id="theme-text">Dark</span>
-    </button>
-    <button type="button" id="qr-btn" class="hide-before-edit toolbar-action-btn" title="Generate QR code for mobile sharing">QR Code</button>
-    <div class="recent-wrapper">
-      <button type="button" id="recent-btn" class="toolbar-action-btn" title="Recently edited projects">Recent</button>
-      <div id="recent-popover" class="recent-popover" style="display: none;">
-        <div class="recent-header">
-          <span class="recent-title-heading">Recently Edited</span>
-          <button type="button" id="clear-recent-btn" class="recent-clear-btn" title="Clear recent history">Clear</button>
+          <form id="md-contents" class="menu metadata-dropdown" onclick="event.stopPropagation()">
+            <div class="metadata-dropdown-header">
+              <span>Project Metadata</span>
+              <label class="metadata-toggle-label">
+                <input title="Include link metadata" type="checkbox" name="includeMetadata" id="md-include" value="true" checked>
+                <span>Embed Metadata</span>
+              </label>
+            </div>
+            <div class="inputrow">
+              <label for="md-title">Title</label>
+              <input type="text" name="title" id="md-title" placeholder="untitled">
+            </div>
+            <div class="inputrow metadata-on">
+              <label for="md-description">Description</label>
+              <input type="text" name="description" id="md-description" placeholder="Short description of your page">
+            </div>
+            <div class="inputrow metadata-on">
+              <label for="md-favicon">Favicon</label>
+              <input type="text" name="favicon" id="md-favicon" placeholder="Emoji (e.g. 🚀) or image URL">
+            </div>
+            <div class="inputrow metadata-on">
+              <label for="md-image">OG Image</label>
+              <input type="text" name="image" id="md-image" placeholder="Image preview URL">
+            </div>
+            <div class="inputrow">
+              <label for="md-password">Password</label>
+              <input type="password" name="password" id="md-password" placeholder="Optional AES-GCM password">
+            </div>
+          </form>
         </div>
-        <ul id="recent-list" class="recent-list"></ul>
       </div>
     </div>
-    <div id="length" class="hide-before-edit menu-item" title="Open project link"></div>
-  </div>
-</div>
 
-<dialog id="templates-modal" class="bitty-modal templates-modal">
-  <div class="modal-card">
-    <div class="modal-header">
-      <div class="modal-title-col">
-        <h3 class="modal-title">HTML Templates</h3>
-        <span class="modal-byte-badge">Select a starter layout to insert into editor</span>
-      </div>
-      <button type="button" id="templates-modal-close" class="modal-close-btn" aria-label="Close dialog">&times;</button>
-    </div>
-    <div class="templates-grid">
-      <div class="template-card" data-template="blank" tabindex="0">
-        <div class="template-card-header">
-          <span class="template-icon">&#128196;</span>
-          <span class="template-name">Blank Page</span>
-        </div>
-        <p class="template-desc">Clean HTML5 boilerplate with responsive viewport, typography & centered container.</p>
-      </div>
-      <div class="template-card" data-template="card" tabindex="0">
-        <div class="template-card-header">
-          <span class="template-icon">&#127915;</span>
-          <span class="template-name">Styled Card</span>
-        </div>
-        <p class="template-desc">Centered modern profile card with avatar badge, bio text, and interactive button.</p>
-      </div>
-      <div class="template-card" data-template="flex" tabindex="0">
-        <div class="template-card-header">
-          <span class="template-icon">&#128208;</span>
-          <span class="template-name">Flex Layout</span>
-        </div>
-        <p class="template-desc">Multi-section responsive layout featuring top navigation header, 2-column cards, and footer.</p>
-      </div>
-      <div class="template-card" data-template="counter" tabindex="0">
-        <div class="template-card-header">
-          <span class="template-icon">&#9881;</span>
-          <span class="template-name">Interactive App</span>
-        </div>
-        <p class="template-desc">Self-contained counter mini-app with modern styling, animated numbers, and JS controls.</p>
+    <div class="header-center">
+      <button type="button" id="templates-btn" class="header-action-pill" title="Starter HTML boilerplate templates">
+        <span class="pill-icon">✨</span> Templates
+      </button>
+      <button type="button" id="format-code-btn" class="header-action-pill" title="Auto-indent & format code (Ctrl+S)">
+        <span class="pill-icon">⚡</span> Auto-indent
+      </button>
+      <button type="button" id="preview-toggle-btn" class="header-action-pill" title="Toggle live preview split-screen">
+        <span class="pill-icon">👁️</span> Preview
+      </button>
+      <div class="formatbar-select-wrap" title="Preview font family">
+        <select id="preview-font-select" class="formatbar-select" aria-label="Preview Font Family">
+          <option value="sans-serif">Sans-serif</option>
+          <option value="serif">Serif</option>
+          <option value="monospace">Monospace</option>
+        </select>
       </div>
     </div>
-  </div>
-</dialog>
 
-<dialog id="qr-modal" class="bitty-modal">
-  <div class="modal-card">
-    <div class="modal-header">
-      <div class="modal-title-col">
-        <h3 id="qr-modal-title" class="modal-title">Bitty Box Project</h3>
-        <span id="qr-byte-count" class="modal-byte-badge"></span>
+    <div class="header-right">
+      <div id="length" class="byte-chip" title="Project size / click to open in new tab">0 bytes</div>
+      <span id="autosave-status" class="autosave-status" title="Draft auto-saved every 30s">Saved</span>
+      <button type="button" id="theme-btn" class="header-tool-btn" title="Toggle theme (Light / Dark)" aria-label="Toggle Light or Dark theme">
+        <span id="theme-icon" class="theme-icon">&#9790;</span><span id="theme-text">Dark</span>
+      </button>
+      <button type="button" id="qr-btn" class="header-tool-btn" title="Generate QR code for mobile sharing">
+        <span class="btn-icon">📱</span> QR Code
+      </button>
+      <div class="recent-wrapper">
+        <button type="button" id="recent-btn" class="header-tool-btn" title="Recently edited projects">
+          <span class="btn-icon">🕒</span> Recent
+        </button>
+        <div id="recent-popover" class="recent-popover" style="display: none;">
+          <div class="recent-header">
+            <span class="recent-title-heading">Recently Edited</span>
+            <button type="button" id="clear-recent-btn" class="recent-clear-btn" title="Clear recent history">Clear</button>
+          </div>
+          <ul id="recent-list" class="recent-list"></ul>
+        </div>
       </div>
-      <button type="button" id="qr-modal-close" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      <button type="button" id="copy" class="header-cta-btn" title="Copy self-contained shareable link">
+        <span class="btn-icon">🔗</span> Copy Link
+      </button>
     </div>
-    <div class="modal-body">
-      <div class="qr-canvas-container">
-        <canvas id="qr-canvas"></canvas>
+  </header>
+
+  <!-- Main Application Workspace -->
+  <main class="bitty-workspace">
+    <!-- Editor Pane -->
+    <section class="editor-pane">
+      <div class="editor-shell">
+        <!-- Integrated Formatting Bar -->
+        <div class="toolbar" id="menubar">
+          <div class="toolbar" id="formatbar">
+            <div class="menu-item" id="format-toggle" title="Toggle rich text formatting toolbar">Aa</div>
+            <span class="ql-formats">
+              <button class="ql-bold" title="Bold"></button>
+              <button class="ql-italic" title="Italic"></button>
+              <select class="ql-header" id="ql-header">HX</select>
+              <select class="ql-color" title="Text Color"></select>
+              <select class="ql-background" title="Background Color"></select>
+              <button class="ql-clean" title="Clear formatting"></button>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-code-block" title="Code block"></button>
+              <button class="ql-link" title="Insert link"></button>
+              <select class="ql-align" title="Text align"></select>
+              <button type="button" class="ql-list" value="bullet" title="Bullet list"></button>
+              <button type="button" class="ql-list" value="ordered" title="Numbered list"></button>
+              <button class="ql-indent" value="-1" title="Outdent"></button>
+              <button class="ql-indent" value="+1" title="Indent"></button>
+            </span>
+          </div>
+        </div>
+
+        <div class="editor-container">
+          <div id="doc-file"></div>
+          <input id="file-input" type="file" name="name" style="display: none;" />
+          <div id="drop-zone"></div>
+          <div id="copy-message">Link copied to clipboard!</div>
+          <div id="toast" class="toast-message" style="display:none;"></div>
+
+          <!-- Empty State Hero Guide -->
+          <div id="placeholder" class="editor-empty-state">
+            <div class="empty-state-card">
+              <div class="empty-badge">⚡ Portable Web Pages</div>
+              <h2 class="empty-heading">Build, compress &amp; share in a single URL.</h2>
+              <p class="empty-description">
+                Everything you write here is compressed using Brotli/Gzip and encoded directly into the URL fragment. No database, no accounts, and zero hosting fees.
+              </p>
+              <div class="starter-templates-row">
+                <button type="button" class="starter-chip" onclick="window.insertTemplate('blank')">
+                  <span class="chip-icon">📄</span>
+                  <span class="chip-text">Blank Page</span>
+                </button>
+                <button type="button" class="starter-chip" onclick="window.insertTemplate('card')">
+                  <span class="chip-icon">🎴</span>
+                  <span class="chip-text">Styled Card</span>
+                </button>
+                <button type="button" class="starter-chip" onclick="window.insertTemplate('flex')">
+                  <span class="chip-icon">📐</span>
+                  <span class="chip-text">Flex Layout</span>
+                </button>
+                <button type="button" class="starter-chip" onclick="window.insertTemplate('counter')">
+                  <span class="chip-icon">🔢</span>
+                  <span class="chip-text">Interactive App</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="editor"></div>
+        </div>
       </div>
-      <p class="qr-hint">Scan with your mobile camera to open this Bitty Box project directly on your device.</p>
-      <div class="qr-actions">
-        <button type="button" id="qr-copy-btn" class="modal-action-btn">Copy Link</button>
+    </section>
+
+    <!-- Split-Screen Live Preview Pane -->
+    <section class="preview-pane">
+      <div class="preview-shell">
+        <div class="preview-shell-header">
+          <div class="preview-status">
+            <span class="pulse-dot"></span>
+            <span class="preview-status-label">Live Preview</span>
+          </div>
+          <div id="preview-overlay" class="preview-overlay">
+            <div class="preview-overlay-card">
+              <div class="preview-overlay-header">
+                <span class="preview-overlay-title">URL Size</span>
+                <span id="preview-overlay-bytes" class="preview-overlay-bytes">0 bytes</span>
+              </div>
+              <div class="preview-overlay-meter">
+                <div id="preview-overlay-bar" class="preview-overlay-bar"></div>
+              </div>
+              <div id="preview-overlay-warning" class="preview-overlay-warning"></div>
+            </div>
+          </div>
+        </div>
+        <iframe id="preview-frame" sandbox="allow-same-origin allow-scripts allow-forms allow-top-navigation allow-popups allow-modals"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <!-- Templates Modal -->
+  <dialog id="templates-modal" class="bitty-modal templates-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-col">
+          <h3 class="modal-title">Starter HTML Templates</h3>
+          <span class="modal-byte-badge">Select a starter layout to insert into the editor</span>
+        </div>
+        <button type="button" id="templates-modal-close" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="templates-grid">
+        <div class="template-card" data-template="blank" tabindex="0">
+          <div class="template-card-header">
+            <span class="template-icon">&#128196;</span>
+            <span class="template-name">Blank Page</span>
+          </div>
+          <p class="template-desc">Clean HTML5 boilerplate with responsive viewport, typography &amp; centered container.</p>
+        </div>
+        <div class="template-card" data-template="card" tabindex="0">
+          <div class="template-card-header">
+            <span class="template-icon">&#127915;</span>
+            <span class="template-name">Styled Card</span>
+          </div>
+          <p class="template-desc">Centered modern profile card with avatar badge, bio text, and interactive button.</p>
+        </div>
+        <div class="template-card" data-template="flex" tabindex="0">
+          <div class="template-card-header">
+            <span class="template-icon">&#128208;</span>
+            <span class="template-name">Flex Layout</span>
+          </div>
+          <p class="template-desc">Multi-section responsive layout featuring top navigation header, 2-column cards, and footer.</p>
+        </div>
+        <div class="template-card" data-template="counter" tabindex="0">
+          <div class="template-card-header">
+            <span class="template-icon">&#9881;</span>
+            <span class="template-name">Interactive App</span>
+          </div>
+          <p class="template-desc">Self-contained counter mini-app with modern styling, animated numbers, and JS controls.</p>
+        </div>
       </div>
     </div>
-  </div>
-</dialog>
+  </dialog>
+
+  <!-- QR Code Modal -->
+  <dialog id="qr-modal" class="bitty-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-col">
+          <h3 id="qr-modal-title" class="modal-title">Bitty Box Project</h3>
+          <span id="qr-byte-count" class="modal-byte-badge"></span>
+        </div>
+        <button type="button" id="qr-modal-close" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="qr-canvas-container">
+          <canvas id="qr-canvas"></canvas>
+        </div>
+        <p class="qr-hint">Scan with your mobile camera to open this Bitty Box project directly on your device.</p>
+        <div class="qr-actions">
+          <button type="button" id="qr-copy-btn" class="modal-action-btn">Copy Link</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
 </body>
 </html>

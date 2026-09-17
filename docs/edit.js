@@ -24,10 +24,11 @@ try {
 } catch (e) {}
 
 var bindings = {}
+var hasHljs = typeof hljs !== 'undefined' || typeof window.hljs !== 'undefined';
 var quill = new Quill('#editor', {
   theme: 'snow',
   modules: {
-    syntax: true,
+    syntax: hasHljs ? { hljs: window.hljs || hljs } : false,
     keyboard: { bindings },
     toolbar: "#formatbar"
   }
@@ -255,10 +256,12 @@ window.onload = async function() {
   if (hash.length) {
     var slashIndex = hash.indexOf("/");
     var title = hash.substring(0, slashIndex);
-    if (title.length)
-      QS("#doc-title").innerText = document.title = decodeURIComponent(
-        title.replace(/_/g, " ")
-      );
+    if (title.length) {
+      let titleDecoded = decodeURIComponent(title.replace(/_/g, " "));
+      document.title = titleDecoded;
+      let titleEl = QS("#doc-title-text") || QS("#doc-title");
+      titleEl.innerText = titleDecoded;
+    }
     hash = hash.substring(slashIndex + 1);
     updateLink(hash, {title});
     if (hash.startsWith("?")) {
@@ -1040,6 +1043,7 @@ function insertTemplate(key) {
   let name = key.charAt(0).toUpperCase() + key.slice(1);
   showToast(`Loaded ${name} template!`);
 }
+window.insertTemplate = insertTemplate;
 
 function updatePreviewOverlay(bytes) {
   let bytesEl = QS("#preview-overlay-bytes");
