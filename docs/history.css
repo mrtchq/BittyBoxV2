@@ -109,3 +109,23 @@ a:not(:hover) div.delete {
 .desc {
   color: var(--secondary-text-color)
 }
+
+@media (max-width: 600px) {
+  body {
+    margin: 1rem 0.5rem;
+  }
+  input {
+    width: 92% !important;
+    font-size: 15px;
+  }
+  #results {
+    gap: 8px;
+  }
+  a {
+    width: 100%;
+    max-width: 100%;
+    margin: 0.25rem 0;
+    height: auto;
+    min-height: 140px;
+  }
+}

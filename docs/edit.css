@@ -1565,48 +1565,348 @@ body:not(.dragging) #drop-zone {
   gap: 6px;
 }
 
-/* Responsive Breakpoints */
+/* ==========================================================================
+   Comprehensive Responsive Design System
+   ========================================================================== */
+
+/* Tablet Landscape / Medium Screens (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .bitty-header {
+    padding: 0 1rem;
+    gap: 0.75rem;
+  }
+  .doc-title-trigger {
+    max-width: 160px;
+  }
+  .editor-pane {
+    padding: 1rem;
+  }
+}
+
+/* Tablet Portrait & Small Tablets (max-width: 768px) */
 @media (max-width: 768px) {
   .bitty-header {
-    padding: 0 0.75rem;
-    gap: 0.5rem;
+    padding: 0 0.6rem;
+    gap: 0.4rem;
+    height: 52px;
   }
+
+  .bitty-workspace {
+    margin-top: 52px;
+    min-height: calc(100vh - 52px);
+  }
+
   .pill-text,
   .btn-label {
     display: none;
   }
-  .doc-title-trigger {
-    max-width: 140px;
+
+  .header-action-pill,
+  .dropdown-trigger {
+    padding: 0 8px;
+    height: 30px;
   }
+
+  .doc-title-trigger {
+    max-width: 110px;
+    padding: 3px 8px;
+    font-size: 12px;
+  }
+
+  .title-tag-icon {
+    display: none;
+  }
+
   .autosave-status {
     display: none;
   }
-  .header-dropdown-menu {
-    right: -40px;
-    width: 280px;
+
+  .byte-chip {
+    padding: 3px 6px;
+    font-size: 10px;
   }
+
+  .header-cta-btn {
+    height: 32px;
+    padding: 0 10px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .header-dropdown-menu {
+    position: fixed;
+    top: 54px;
+    right: 8px;
+    left: auto;
+    width: min(300px, calc(100vw - 16px));
+    max-height: calc(100vh - 65px);
+    overflow-y: auto;
+  }
+
+  .recent-popover {
+    position: fixed;
+    top: 54px;
+    right: 8px;
+    left: auto;
+    width: min(300px, calc(100vw - 16px));
+    max-height: calc(100vh - 65px);
+    overflow-y: auto;
+  }
+
+  .metadata-dropdown {
+    position: fixed;
+    top: 54px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 65px);
+    overflow-y: auto;
+  }
+
+  /* Split-screen Live Preview Stack Layout on Tablets & Mobile */
   body.preview .bitty-workspace {
     flex-direction: column;
+    height: calc(100vh - 52px);
+    overflow: hidden;
   }
-  body.preview .editor-pane,
-  body.preview .preview-pane {
-    flex: 0 0 50vh;
+
+  body.preview .editor-pane {
+    flex: 0 0 45vh;
+    height: 45vh;
+    max-height: 45vh;
     width: 100%;
+    padding: 0.25rem 0.5rem;
+    border-right: none;
+    border-bottom: 2px solid var(--border-strong);
+    overflow: hidden;
+  }
+
+  body.preview .editor-shell {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    border-radius: 8px;
+  }
+
+  body.preview .editor-container {
+    padding: 0.5rem;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  body.preview div#editor.ql-container.ql-snow {
+    min-height: 0 !important;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  body.preview #editor .ql-editor {
+    min-height: 0 !important;
+  }
+
+  body.preview .preview-pane {
+    flex: 1 1 auto;
+    height: calc(55vh - 52px);
+    max-height: calc(55vh - 52px);
+    width: 100%;
+    overflow: hidden;
+  }
+
+  body.preview .preview-shell-header {
+    height: 38px;
+    padding: 0 0.75rem;
+  }
+
+  /* Single-pane Editor Layout adjustments */
+  .editor-pane {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .editor-shell {
+    min-height: calc(100vh - 52px - 1.5rem);
+    border-radius: 10px;
+  }
+
+  .editor-container {
+    padding: 1rem 0.75rem;
+  }
+
+  /* Formatbar horizontal scrolling touch-friendly */
+  #menubar {
+    padding: 4px 6px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  #menubar::-webkit-scrollbar {
+    display: none;
+  }
+
+  #formatbar {
+    flex-wrap: nowrap;
+    width: auto;
+  }
+
+  /* Modals */
+  .modal-card {
+    padding: 1.25rem;
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 30px);
+  }
+
+  .templates-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 
-@media (max-width: 480px) {
+/* Mobile Phones & Compact Screens (max-width: 600px) */
+@media (max-width: 600px) {
+  .bitty-header {
+    padding: 0 0.4rem;
+    gap: 0.25rem;
+    height: 48px;
+  }
+
+  .bitty-workspace {
+    margin-top: 48px;
+    min-height: calc(100vh - 48px);
+  }
+
   .brand-pill {
     display: none;
   }
-  .byte-chip {
-    font-size: 10px;
-    padding: 3px 6px;
+
+  .brand-icon {
+    font-size: 18px;
   }
-  .copy-text {
+
+  .brand-name {
+    font-size: 13px;
+  }
+
+  .doc-title-trigger {
+    max-width: 85px;
+    padding: 3px 6px;
+    font-size: 11px;
+    gap: 3px;
+  }
+
+  .header-right {
+    gap: 0.25rem;
+  }
+
+  .header-action-pill {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    justify-content: center;
+    min-width: 30px;
+  }
+
+  .dropdown-trigger {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    justify-content: center;
+    min-width: 30px;
+  }
+
+  .dropdown-chevron {
     display: none;
   }
+
+  .byte-chip {
+    font-size: 10px;
+    padding: 2px 5px;
+    max-width: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .copy-text {
+    font-size: 0;
+  }
+
+  .copy-text::before {
+    content: "Copy";
+    font-size: 11px;
+  }
+
   .header-cta-btn {
-    padding: 0 10px;
+    height: 30px;
+    padding: 0 8px;
+    font-size: 11px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .empty-state-card {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .empty-heading {
+    font-size: 1.2rem;
+  }
+
+  .empty-description {
+    font-size: 12px;
+  }
+
+  .starter-templates-row {
+    gap: 6px;
+  }
+
+  .starter-chip {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .qr-canvas-container {
+    padding: 8px;
+  }
+
+  #qr-canvas {
+    width: 170px !important;
+    height: 170px !important;
+  }
+
+  .toast-message {
+    bottom: 12px;
+    font-size: 12px;
+    padding: 8px 14px;
+    max-width: calc(100vw - 24px);
+  }
+
+  body.preview .editor-pane {
+    flex: 0 0 42vh;
+    height: 42vh;
+    max-height: 42vh;
+  }
+
+  body.preview .preview-pane {
+    height: calc(58vh - 48px);
+    max-height: calc(58vh - 48px);
+  }
+}
+
+/* Very Small Mobile Phones (max-width: 360px) */
+@media (max-width: 360px) {
+  .brand-name {
+    display: none;
+  }
+
+  .doc-title-trigger {
+    max-width: 65px;
+  }
+
+  .copy-text::before {
+    display: none;
+  }
+
+  .header-cta-btn {
+    padding: 0 8px;
   }
 }
